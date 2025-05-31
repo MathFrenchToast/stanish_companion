@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useWorkoutStore } from '../stores/workout'
 
 const emit = defineEmits(['close'])
