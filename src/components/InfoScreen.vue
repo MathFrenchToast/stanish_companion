@@ -3,7 +3,7 @@
     <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-start mb-6">
         <h2 class="text-2xl font-bold">Welcome to Stanish Protocol</h2>
-        <button @click="close" class="text-gray-500 hover:text-gray-700">
+        <button @click="$emit('close')" class="text-gray-500 hover:text-gray-700">
           <span class="sr-only">Close</span>
           ✕
         </button>
@@ -51,7 +51,7 @@
           Don't show this again
         </label>
         <button 
-          @click="close" 
+          @click="$emit('close')" 
           class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
         >
           Get Started
@@ -69,10 +69,9 @@ const emit = defineEmits(['close'])
 const store = useWorkoutStore()
 const dontShowAgain = ref(false)
 
-const close = () => {
-  if (dontShowAgain.value) {
+watch(dontShowAgain, (newValue) => {
+  if (newValue) {
     store.updateSettings({ showInfoScreen: false })
   }
-  emit('close')
-}
+})
 </script>
