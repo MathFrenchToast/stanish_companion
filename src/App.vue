@@ -1,25 +1,31 @@
 <template>
   <div class="min-h-screen bg-gray-100">
     <nav class="bg-blue-600 text-white p-4">
-      <h1 class="text-xl font-bold">Stanish Protocol</h1>
-    </nav>
-    <main class="container mx-auto p-4">
-      <div class="flex flex-col items-center justify-center mt-10">
-        <h2 class="text-2xl font-bold mb-6">Welcome to Stanish Protocol</h2>
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-xl font-bold">Stanish Protocol</h1>
         <button 
           @click="startWorkout" 
-          class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          class="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors"
         >
-          Start Workout
+          Start Today's Workout
         </button>
       </div>
+    </nav>
+    
+    <main class="container mx-auto p-4">
+      <ProgressTracker />
     </main>
   </div>
 </template>
 
 <script setup>
+import { useWorkoutStore } from './stores/workout'
+import ProgressTracker from './components/ProgressTracker.vue'
+
+const store = useWorkoutStore()
+
 const startWorkout = () => {
-  // TODO: Implement workout start
-  console.log('Starting workout...');
-};
+  // TODO: Implement workout session
+  console.log('Starting workout for Week', store.currentWeek, 'Day', store.currentDay)
+}
 </script>
