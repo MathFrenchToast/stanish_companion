@@ -28,14 +28,16 @@
           </p>
           <p>Hold for {{ store.workoutSession.stretchDuration }} seconds</p>
         </div>
-        <UseTimer 
-          :initial="store.workoutSession.stretchDuration"
-          @finish="handleStretchComplete"
+        <div class="text-6xl font-bold mb-4">
+          {{ timer }}
+        </div>
+        <button 
+          @click="startStretchTimer"
+          :disabled="isTimerRunning"
+          class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 disabled:opacity-50"
         >
-          <template #default="{ seconds }">
-            <div class="text-6xl font-bold mb-4">{{ seconds }}</div>
-          </template>
-        </UseTimer>
+          {{ isTimerRunning ? 'Stretching...' : 'Start Stretch' }}
+        </button>
       </div>
 
       <!-- Exercise -->
@@ -66,14 +68,16 @@
           </p>
           <p>Hold for {{ store.workoutSession.stretchDuration }} seconds</p>
         </div>
-        <UseTimer 
-          :initial="store.workoutSession.stretchDuration"
-          @finish="handleStretchComplete"
+        <div class="text-6xl font-bold mb-4">
+          {{ timer }}
+        </div>
+        <button 
+          @click="startStretchTimer"
+          :disabled="isTimerRunning"
+          class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 disabled:opacity-50"
         >
-          <template #default="{ seconds }">
-            <div class="text-6xl font-bold mb-4">{{ seconds }}</div>
-          </template>
-        </UseTimer>
+          {{ isTimerRunning ? 'Stretching...' : 'Start Stretch' }}
+        </button>
       </div>
 
       <!-- Complete -->
@@ -98,7 +102,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useWorkoutStore } from '../stores/workout'
-import { UseTimer } from '@vueuse/components'
+import { useIntervalFn } from '@vueuse/core'
 
 const emit = defineEmits(['close'])
 const store = useWorkoutStore()
@@ -107,6 +111,25 @@ const painLevels = {
   none: '😊 None',
   moderate: '😐 Moderate',
   high: '😣 High'
+}
+
+const timer = ref(0)
+const isTimerRunning = ref(false)
+
+const { pause: pauseTimer, resume: startInterval } = useIntervalFn(() => {
+  if (timer.value > 0) {
+    timer.value--
+  } else {
+    pauseTimer()
+    isTimerRunning.value = false
+    handleStretchComplete()
+  }
+}, 1000, { immediate: false })
+
+const startStretchTimer = () => {
+  timer.value = store.workoutSession.stretchDuration
+  isTimerRunning.value = true
+  startInterval()
 }
 
 store.resetWorkoutSession()
