@@ -33,6 +33,11 @@
       v-if="showWorkout"
       @close="showWorkout = false"
     />
+
+    <InfoScreen
+      v-if="store.settings.showInfoScreen"
+      @close="showInfo = false"
+    />
   </div>
 </template>
 
@@ -42,8 +47,10 @@ import { useWorkoutStore } from './stores/workout'
 import ProgressTracker from './components/ProgressTracker.vue'
 import WorkoutSession from './components/WorkoutSession.vue'
 import Settings from './components/Settings.vue'
+import InfoScreen from './components/InfoScreen.vue'
 
 const store = useWorkoutStore()
 const showWorkout = ref(false)
 const showSettings = ref(false)
+const showInfo = ref(true)
 </script>

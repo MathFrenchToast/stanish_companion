@@ -9,7 +9,8 @@ export const useWorkoutStore = defineStore('workout', {
     showPastWeeks: useLocalStorage('showPastWeeks', true),
     settings: useLocalStorage('settings', {
       restTime: 10,
-      repDuration: 6
+      repDuration: 6,
+      showInfoScreen: true
     }),
     workoutSession: {
       step: 'warmup',

@@ -34,6 +34,17 @@
           <span class="text-gray-500">seconds</span>
         </div>
       </div>
+
+      <div>
+        <label class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            v-model="settings.showInfoScreen"
+            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <span class="text-sm font-medium text-gray-700">Show information screen on startup</span>
+        </label>
+      </div>
     </div>
 
     <div class="mt-6 flex justify-end">
@@ -55,7 +66,8 @@ const emit = defineEmits(['close'])
 const store = useWorkoutStore()
 const settings = reactive({
   restTime: store.settings.restTime,
-  repDuration: store.settings.repDuration
+  repDuration: store.settings.repDuration,
+  showInfoScreen: store.settings.showInfoScreen
 })
 
 const saveAndClose = () => {
