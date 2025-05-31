@@ -125,7 +125,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useWorkoutStore } from '../stores/workout'
 import { useIntervalFn } from '@vueuse/core'
 
@@ -186,6 +186,10 @@ const handleStretchComplete = () => {
   if (store.workoutSession.stretchCount >= store.workoutSession.totalStretches) {
     store.workoutSession.stretchCount = 0
     store.nextStep()
+    if (store.workoutSession.step === 'exercise') {
+      // Start the rep timer when entering exercise step
+      startRepInterval()
+    }
   } else {
     // Start the button timer for the next stretch
     buttonTimer.value = 0
@@ -199,24 +203,30 @@ const handleRepComplete = () => {
   
   if (store.workoutSession.currentRep < store.workoutSession.totalReps) {
     store.workoutSession.currentRep++
+    startRepInterval()
   } else {
     store.workoutSession.currentRep = 1
     if (store.workoutSession.currentSet < store.workoutSession.totalSets) {
       store.workoutSession.currentSet++
+      startRepInterval()
     } else {
       store.nextStep()
-      return
     }
   }
-  
-  // Start the timer for the next rep
-  startRepInterval()
 }
 
 const completeWorkout = (painLevel) => {
   store.completeWorkout(painLevel)
   emit('close')
 }
+
+// Watch for step changes to start timers appropriately
+watch(() => store.workoutSession.step, (newStep) => {
+  if (newStep === 'exercise') {
+    repTimer.value = 0
+    startRepInterval()
+  }
+})
 
 // Start the initial button timer when the component is mounted
 onMounted(() => {
