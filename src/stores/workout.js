@@ -7,8 +7,12 @@ export const useWorkoutStore = defineStore('workout', {
     currentDay: useLocalStorage('currentDay', 1),
     progress: useLocalStorage('progress', {}),
     showPastWeeks: useLocalStorage('showPastWeeks', true),
+    settings: useLocalStorage('settings', {
+      restTime: 10,
+      repDuration: 3
+    }),
     workoutSession: {
-      step: 'warmup', // warmup, exercise, cooldown, complete
+      step: 'warmup',
       timer: 0,
       currentSet: 1,
       currentRep: 1,
@@ -16,8 +20,8 @@ export const useWorkoutStore = defineStore('workout', {
       totalReps: 10,
       stretchCount: 0,
       totalStretches: 5,
-      stretchDuration: 20, // seconds
-      restDuration: 30, // seconds between sets
+      stretchDuration: 20,
+      restDuration: 30,
     }
   }),
 
@@ -44,6 +48,9 @@ export const useWorkoutStore = defineStore('workout', {
   },
 
   actions: {
+    updateSettings(newSettings) {
+      this.settings = { ...this.settings, ...newSettings }
+    },
     completeWorkout(painLevel) {
       this.progress[`${this.currentWeek}-${this.currentDay}`] = {
         completed: true,
@@ -51,7 +58,6 @@ export const useWorkoutStore = defineStore('workout', {
         completedAt: new Date().toISOString()
       }
       
-      // Move to next day
       if (this.currentDay === 7) {
         this.currentDay = 1
         if (this.currentWeek < 6) {

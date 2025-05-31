@@ -40,10 +40,10 @@
             <div 
               v-if="buttonTimer > 0"
               class="absolute inset-0 bg-green-500 transition-all duration-100"
-              :style="{ width: `${(buttonTimer / startButtonDuration) * 100}%` }"
+              :style="{ width: `${(buttonTimer / store.settings.restTime) * 100}%` }"
             ></div>
             <span class="relative z-10">
-              {{ isTimerRunning ? 'Stretching...' : buttonTimer > 0 ? 'Starting in ' + (startButtonDuration - buttonTimer) + 's...' : 'Start Stretch' }}
+              {{ isTimerRunning ? 'Stretching...' : buttonTimer > 0 ? 'Starting in ' + (store.settings.restTime - buttonTimer) + 's...' : 'Start Stretch' }}
             </span>
           </button>
         </div>
@@ -68,7 +68,7 @@
             <div 
               v-if="repTimer > 0"
               class="absolute inset-0 bg-blue-400 transition-all duration-100"
-              :style="{ width: `${(repTimer / repTimerDuration) * 100}%` }"
+              :style="{ width: `${(repTimer / store.settings.repDuration) * 100}%` }"
             ></div>
             <span class="relative z-10">Next Rep</span>
           </button>
@@ -96,10 +96,10 @@
             <div 
               v-if="buttonTimer > 0"
               class="absolute inset-0 bg-green-500 transition-all duration-100"
-              :style="{ width: `${(buttonTimer / startButtonDuration) * 100}%` }"
+              :style="{ width: `${(buttonTimer / store.settings.restTime) * 100}%` }"
             ></div>
             <span class="relative z-10">
-              {{ isTimerRunning ? 'Stretching...' : buttonTimer > 0 ? 'Starting in ' + (startButtonDuration - buttonTimer) + 's...' : 'Start Stretch' }}
+              {{ isTimerRunning ? 'Stretching...' : buttonTimer > 0 ? 'Starting in ' + (store.settings.restTime - buttonTimer) + 's...' : 'Start Stretch' }}
             </span>
           </button>
         </div>
@@ -141,9 +141,7 @@ const painLevels = {
 const timer = ref(0)
 const isTimerRunning = ref(false)
 const buttonTimer = ref(0)
-const startButtonDuration = 10 // seconds
 const repTimer = ref(0)
-const repTimerDuration = 2 // seconds
 
 const { pause: pauseTimer, resume: startInterval } = useIntervalFn(() => {
   if (timer.value > 0) {
@@ -156,18 +154,18 @@ const { pause: pauseTimer, resume: startInterval } = useIntervalFn(() => {
 }, 1000, { immediate: false })
 
 const { pause: pauseButtonTimer, resume: startButtonInterval } = useIntervalFn(() => {
-  if (buttonTimer.value < startButtonDuration) {
+  if (buttonTimer.value < store.settings.restTime) {
     buttonTimer.value++
-    if (buttonTimer.value >= startButtonDuration) {
+    if (buttonTimer.value >= store.settings.restTime) {
       startStretchTimer()
     }
   }
 }, 1000, { immediate: false })
 
 const { pause: pauseRepTimer, resume: startRepInterval } = useIntervalFn(() => {
-  if (repTimer.value < repTimerDuration) {
+  if (repTimer.value < store.settings.repDuration) {
     repTimer.value++
-    if (repTimer.value >= repTimerDuration) {
+    if (repTimer.value >= store.settings.repDuration) {
       handleRepComplete()
     }
   }
@@ -187,11 +185,9 @@ const handleStretchComplete = () => {
     store.workoutSession.stretchCount = 0
     store.nextStep()
     if (store.workoutSession.step === 'exercise') {
-      // Start the rep timer when entering exercise step
       startRepInterval()
     }
   } else {
-    // Start the button timer for the next stretch
     buttonTimer.value = 0
     startButtonInterval()
   }
@@ -220,7 +216,6 @@ const completeWorkout = (painLevel) => {
   emit('close')
 }
 
-// Watch for step changes to start timers appropriately
 watch(() => store.workoutSession.step, (newStep) => {
   if (newStep === 'exercise') {
     repTimer.value = 0
@@ -228,13 +223,11 @@ watch(() => store.workoutSession.step, (newStep) => {
   }
 })
 
-// Start the initial button timer when the component is mounted
 onMounted(() => {
   store.resetWorkoutSession()
   startButtonInterval()
 })
 
-// Clean up timers when component is unmounted
 onUnmounted(() => {
   pauseTimer()
   pauseButtonTimer()
