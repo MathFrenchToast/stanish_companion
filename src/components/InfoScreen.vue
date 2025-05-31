@@ -45,7 +45,8 @@
         <label class="flex items-center gap-2 text-sm text-gray-600">
           <input 
             type="checkbox" 
-            v-model="store.settings.showInfoScreen"
+            :checked="!store.settings.showInfoScreen"
+            @change="e => store.updateSettings({ showInfoScreen: !e.target.checked })"
             class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           >
           Don't show this again
