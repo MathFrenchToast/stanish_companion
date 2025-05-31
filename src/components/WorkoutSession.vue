@@ -18,6 +18,14 @@
           <p>Speed: {{ store.getCurrentSpeed }}</p>
           <p>Rep Duration: {{ store.getCurrentRepDuration }}s</p>
         </div>
+
+        <div class="mb-4 flex justify-center">
+          <img 
+            :src="getExerciseImage"
+            :alt="getExerciseAlt"
+            class="rounded-lg w-full max-w-sm h-48 object-cover"
+          />
+        </div>
       </div>
 
       <!-- Warmup -->
@@ -129,7 +137,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { useWorkoutStore } from '../stores/workout'
 import { useIntervalFn } from '@vueuse/core'
 
@@ -146,6 +154,20 @@ const timer = ref(0)
 const isTimerRunning = ref(false)
 const buttonTimer = ref(0)
 const repTimer = ref(0)
+
+const getExerciseImage = computed(() => {
+  if (store.workoutSession.step === 'warmup' || store.workoutSession.step === 'cooldown') {
+    return 'https://images.pexels.com/photos/4056535/pexels-photo-4056535.jpeg'
+  }
+  return 'https://images.pexels.com/photos/4162487/pexels-photo-4162487.jpeg'
+})
+
+const getExerciseAlt = computed(() => {
+  if (store.workoutSession.step === 'warmup' || store.workoutSession.step === 'cooldown') {
+    return 'Stretching exercise demonstration'
+  }
+  return 'Calf raise exercise demonstration'
+})
 
 const { pause: pauseTimer, resume: startInterval } = useIntervalFn(() => {
   if (timer.value > 0) {
