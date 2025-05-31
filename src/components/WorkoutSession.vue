@@ -90,7 +90,6 @@
         </div>
         <div class="relative">
           <button 
-            @click="startStretchTimer"
             :disabled="isTimerRunning"
             class="relative bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 disabled:opacity-50 w-48 overflow-hidden"
           >
@@ -100,7 +99,7 @@
               :style="{ width: `${(buttonTimer / store.settings.restTime) * 100}%` }"
             ></div>
             <span class="relative z-10">
-              {{ isTimerRunning ? 'Stretching...' : buttonTimer > 0 ? 'Starting in ' + (store.settings.restTime - buttonTimer) + 's...' : 'Start Stretch' }}
+              {{ isTimerRunning ? 'Stretching...' : buttonTimer > 0 ? 'Starting in ' + (store.settings.restTime - buttonTimer) + 's...' : 'Stretching...' }}
             </span>
           </button>
         </div>
@@ -225,6 +224,9 @@ watch(() => store.workoutSession.step, (newStep) => {
   if (newStep === 'exercise') {
     repTimer.value = 0
     startRepInterval()
+  } else if (newStep === 'cooldown') {
+    buttonTimer.value = 0
+    startButtonInterval()
   }
 })
 
