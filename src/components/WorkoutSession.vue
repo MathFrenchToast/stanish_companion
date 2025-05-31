@@ -33,17 +33,17 @@
         </div>
         <div class="relative">
           <button 
-            @click="handleButtonPress"
+            @click="startStretchTimer"
             :disabled="isTimerRunning"
             class="relative bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 disabled:opacity-50 w-48 overflow-hidden"
           >
             <div 
-              v-if="isButtonTimerRunning"
+              v-if="buttonTimer > 0"
               class="absolute inset-0 bg-green-500 transition-all duration-100"
               :style="{ width: `${(buttonTimer / startButtonDuration) * 100}%` }"
             ></div>
             <span class="relative z-10">
-              {{ isTimerRunning ? 'Stretching...' : buttonTimer > 0 ? 'Hold...' : 'Start Stretch' }}
+              {{ isTimerRunning ? 'Stretching...' : buttonTimer > 0 ? 'Starting in ' + (startButtonDuration - buttonTimer) + 's...' : 'Start Stretch' }}
             </span>
           </button>
         </div>
@@ -82,17 +82,17 @@
         </div>
         <div class="relative">
           <button 
-            @click="handleButtonPress"
+            @click="startStretchTimer"
             :disabled="isTimerRunning"
             class="relative bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 disabled:opacity-50 w-48 overflow-hidden"
           >
             <div 
-              v-if="isButtonTimerRunning"
+              v-if="buttonTimer > 0"
               class="absolute inset-0 bg-green-500 transition-all duration-100"
               :style="{ width: `${(buttonTimer / startButtonDuration) * 100}%` }"
             ></div>
             <span class="relative z-10">
-              {{ isTimerRunning ? 'Stretching...' : buttonTimer > 0 ? 'Hold...' : 'Start Stretch' }}
+              {{ isTimerRunning ? 'Stretching...' : buttonTimer > 0 ? 'Starting in ' + (startButtonDuration - buttonTimer) + 's...' : 'Start Stretch' }}
             </span>
           </button>
         </div>
@@ -118,7 +118,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useWorkoutStore } from '../stores/workout'
 import { useIntervalFn } from '@vueuse/core'
 
@@ -134,7 +134,6 @@ const painLevels = {
 const timer = ref(0)
 const isTimerRunning = ref(false)
 const buttonTimer = ref(0)
-const isButtonTimerRunning = ref(false)
 const startButtonDuration = 10 // seconds
 
 const { pause: pauseTimer, resume: startInterval } = useIntervalFn(() => {
@@ -151,36 +150,28 @@ const { pause: pauseButtonTimer, resume: startButtonInterval } = useIntervalFn((
   if (buttonTimer.value < startButtonDuration) {
     buttonTimer.value++
     if (buttonTimer.value >= startButtonDuration) {
-      pauseButtonTimer()
-      isButtonTimerRunning.value = false
       startStretchTimer()
     }
   }
 }, 1000, { immediate: false })
 
 const startStretchTimer = () => {
+  pauseButtonTimer()
   buttonTimer.value = 0
-  isButtonTimerRunning.value = false
   timer.value = store.workoutSession.stretchDuration
   isTimerRunning.value = true
   startInterval()
 }
-
-const handleButtonPress = () => {
-  if (!isButtonTimerRunning.value && !isTimerRunning.value) {
-    buttonTimer.value = 0
-    isButtonTimerRunning.value = true
-    startButtonInterval()
-  }
-}
-
-store.resetWorkoutSession()
 
 const handleStretchComplete = () => {
   store.workoutSession.stretchCount++
   if (store.workoutSession.stretchCount >= store.workoutSession.totalStretches) {
     store.workoutSession.stretchCount = 0
     store.nextStep()
+  } else {
+    // Start the button timer for the next stretch
+    buttonTimer.value = 0
+    startButtonInterval()
   }
 }
 
@@ -201,4 +192,16 @@ const completeWorkout = (painLevel) => {
   store.completeWorkout(painLevel)
   emit('close')
 }
+
+// Start the initial button timer when the component is mounted
+onMounted(() => {
+  store.resetWorkoutSession()
+  startButtonInterval()
+})
+
+// Clean up timers when component is unmounted
+onUnmounted(() => {
+  pauseTimer()
+  pauseButtonTimer()
+})
 </script>
