@@ -45,7 +45,7 @@
         <label class="flex items-center gap-2 text-sm text-gray-600">
           <input 
             type="checkbox" 
-            v-model="dontShowAgain"
+            v-model="store.settings.showInfoScreen"
             class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           >
           Don't show this again
@@ -62,17 +62,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useWorkoutStore } from '../stores/workout'
 
 const emit = defineEmits(['close'])
 const store = useWorkoutStore()
-const dontShowAgain = ref(false)
 
 const handleClose = () => {
-  if (dontShowAgain.value) {
-    store.updateSettings({ showInfoScreen: false })
-  }
   emit('close')
 }
 </script>
