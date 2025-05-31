@@ -35,7 +35,7 @@
     />
 
     <InfoScreen
-      v-if="store.settings.showInfoScreen"
+      v-if="showInfo"
       @close="showInfo = false"
     />
   </div>
