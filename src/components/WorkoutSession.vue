@@ -60,12 +60,19 @@
             Rep {{ store.workoutSession.currentRep }}/{{ store.workoutSession.totalReps }}
           </p>
         </div>
-        <button 
-          @click="handleRepComplete"
-          class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700"
-        >
-          Next Rep
-        </button>
+        <div class="relative">
+          <button 
+            @click="handleRepComplete"
+            class="relative bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 w-48 overflow-hidden"
+          >
+            <div 
+              v-if="repTimer > 0"
+              class="absolute inset-0 bg-blue-400 transition-all duration-100"
+              :style="{ width: `${(repTimer / repTimerDuration) * 100}%` }"
+            ></div>
+            <span class="relative z-10">Next Rep</span>
+          </button>
+        </div>
       </div>
 
       <!-- Cooldown -->
@@ -135,6 +142,8 @@ const timer = ref(0)
 const isTimerRunning = ref(false)
 const buttonTimer = ref(0)
 const startButtonDuration = 10 // seconds
+const repTimer = ref(0)
+const repTimerDuration = 2 // seconds
 
 const { pause: pauseTimer, resume: startInterval } = useIntervalFn(() => {
   if (timer.value > 0) {
@@ -151,6 +160,15 @@ const { pause: pauseButtonTimer, resume: startButtonInterval } = useIntervalFn((
     buttonTimer.value++
     if (buttonTimer.value >= startButtonDuration) {
       startStretchTimer()
+    }
+  }
+}, 1000, { immediate: false })
+
+const { pause: pauseRepTimer, resume: startRepInterval } = useIntervalFn(() => {
+  if (repTimer.value < repTimerDuration) {
+    repTimer.value++
+    if (repTimer.value >= repTimerDuration) {
+      handleRepComplete()
     }
   }
 }, 1000, { immediate: false })
@@ -176,6 +194,9 @@ const handleStretchComplete = () => {
 }
 
 const handleRepComplete = () => {
+  pauseRepTimer()
+  repTimer.value = 0
+  
   if (store.workoutSession.currentRep < store.workoutSession.totalReps) {
     store.workoutSession.currentRep++
   } else {
@@ -184,8 +205,12 @@ const handleRepComplete = () => {
       store.workoutSession.currentSet++
     } else {
       store.nextStep()
+      return
     }
   }
+  
+  // Start the timer for the next rep
+  startRepInterval()
 }
 
 const completeWorkout = (painLevel) => {
@@ -203,5 +228,6 @@ onMounted(() => {
 onUnmounted(() => {
   pauseTimer()
   pauseButtonTimer()
+  pauseRepTimer()
 })
 </script>
