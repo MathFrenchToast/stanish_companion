@@ -109,6 +109,10 @@
       <!-- Complete -->
       <div v-if="store.workoutSession.step === 'complete'" class="text-center">
         <h3 class="text-xl font-semibold mb-4">Great job! 🎉</h3>
+        <div class="bg-blue-50 p-4 rounded-lg mb-6">
+          <p class="text-blue-800 font-medium">Remember to ice your tendon for 10 minutes!</p>
+          <p class="text-sm text-blue-600 mt-1">Use crushed ice in a plastic bag with a cloth between the ice and your skin.</p>
+        </div>
         <p class="mb-4">How was the pain level during this session?</p>
         <div class="flex justify-center gap-4 mb-6">
           <button 
