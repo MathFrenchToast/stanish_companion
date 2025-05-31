@@ -40,7 +40,7 @@
           >
             <div 
               v-if="buttonTimer > 0"
-              class="absolute inset-0 bg-green-500 transition-all duration-100"
+              class="absolute inset-0 bg-blue-400 transition-all duration-100"
               :style="{ width: `${(buttonTimer / store.settings.restTime) * 100}%` }"
             ></div>
             <span class="relative z-10">
@@ -96,7 +96,7 @@
           >
             <div 
               v-if="buttonTimer > 0"
-              class="absolute inset-0 bg-green-500 transition-all duration-100"
+              class="absolute inset-0 bg-blue-400 transition-all duration-100"
               :style="{ width: `${(buttonTimer / store.settings.restTime) * 100}%` }"
             ></div>
             <span class="relative z-10">
