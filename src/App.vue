@@ -21,7 +21,11 @@
     </nav>
     
     <main class="container mx-auto p-4">
-      <Settings v-if="showSettings" class="mb-4" />
+      <Settings 
+        v-if="showSettings" 
+        class="mb-4" 
+        @close="showSettings = false"
+      />
       <ProgressTracker @startWorkout="showWorkout = true" />
     </main>
 

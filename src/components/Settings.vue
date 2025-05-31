@@ -38,7 +38,7 @@
 
     <div class="mt-6 flex justify-end">
       <button
-        @click="saveSettings"
+        @click="saveAndClose"
         class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
       >
         Save Settings
@@ -51,13 +51,15 @@
 import { reactive } from 'vue'
 import { useWorkoutStore } from '../stores/workout'
 
+const emit = defineEmits(['close'])
 const store = useWorkoutStore()
 const settings = reactive({
   restTime: store.settings.restTime,
   repDuration: store.settings.repDuration
 })
 
-const saveSettings = () => {
+const saveAndClose = () => {
   store.updateSettings(settings)
+  emit('close')
 }
 </script>
