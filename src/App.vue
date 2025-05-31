@@ -53,4 +53,4 @@ const store = useWorkoutStore()
 const showWorkout = ref(false)
 const showSettings = ref(false)
 const showInfo = ref(true)
-</script>
+</script>inti
