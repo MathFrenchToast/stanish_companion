@@ -6,7 +6,8 @@
     </div>
     <div class="grid grid-cols-7 gap-2">
       <div v-for="day in 7" :key="day" 
-           :class="['p-2 rounded border', isCurrentDay(day) ? 'border-blue-500 bg-blue-50' : 'border-gray-200']">
+           :class="['p-2 rounded border', isCurrentDay(day) ? 'border-blue-500 bg-blue-50' : 'border-gray-200']"
+           @click="handleDayClick(day)">
         <div class="text-sm font-medium mb-1">Day {{ day }}</div>
         <template v-if="isWorkoutCompleted(day)">
           <div class="flex items-center justify-center">
@@ -34,6 +35,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const emit = defineEmits(['startWorkout'])
 
 const store = useWorkoutStore()
 
@@ -67,5 +70,11 @@ const getWorkoutDescription = (day) => {
   if (day <= 2) return 'Slow'
   if (day <= 5) return 'Medium'
   return 'Fast'
+}
+
+const handleDayClick = (day) => {
+  if (isCurrentDay(day) && !isWorkoutCompleted(day)) {
+    emit('startWorkout')
+  }
 }
 </script>

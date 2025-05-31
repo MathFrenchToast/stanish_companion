@@ -13,7 +13,7 @@
     </nav>
     
     <main class="container mx-auto p-4">
-      <ProgressTracker />
+      <ProgressTracker @startWorkout="showWorkout = true" />
     </main>
 
     <WorkoutSession 

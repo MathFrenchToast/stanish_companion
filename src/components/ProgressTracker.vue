@@ -10,7 +10,8 @@
     <template v-for="week in 6" :key="week">
       <WeekProgress 
         v-if="shouldShowWeek(week)"
-        :week="week" 
+        :week="week"
+        @startWorkout="$emit('startWorkout')"
       />
     </template>
   </div>
@@ -29,4 +30,6 @@ const shouldShowWeek = (week) => {
 const togglePastWeeks = () => {
   store.togglePastWeeks()
 }
+
+defineEmits(['startWorkout'])
 </script>
