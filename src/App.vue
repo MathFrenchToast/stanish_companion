@@ -52,5 +52,5 @@ import InfoScreen from './components/InfoScreen.vue'
 const store = useWorkoutStore()
 const showWorkout = ref(false)
 const showSettings = ref(false)
-const showInfo = ref(true)
-</script>inti
+const showInfo = ref(store.settings.showInfoScreen)
+</script>
