@@ -16,6 +16,7 @@
           <p class="font-medium">Today's workout:</p>
           <p>Support: {{ store.getCurrentWorkoutType }}</p>
           <p>Speed: {{ store.getCurrentSpeed }}</p>
+          <p>Rep Duration: {{ store.getCurrentRepDuration }}s</p>
         </div>
       </div>
 
@@ -68,7 +69,7 @@
             <div 
               v-if="repTimer > 0"
               class="absolute inset-0 bg-blue-400 transition-all duration-100"
-              :style="{ width: `${(repTimer / store.settings.repDuration) * 100}%` }"
+              :style="{ width: `${(repTimer / store.getCurrentRepDuration) * 100}%` }"
             ></div>
             <span class="relative z-10">Next Rep</span>
           </button>
@@ -163,9 +164,9 @@ const { pause: pauseButtonTimer, resume: startButtonInterval } = useIntervalFn((
 }, 1000, { immediate: false })
 
 const { pause: pauseRepTimer, resume: startRepInterval } = useIntervalFn(() => {
-  if (repTimer.value < store.settings.repDuration) {
+  if (repTimer.value < store.getCurrentRepDuration) {
     repTimer.value++
-    if (repTimer.value >= store.settings.repDuration) {
+    if (repTimer.value >= store.getCurrentRepDuration) {
       handleRepComplete()
     }
   }

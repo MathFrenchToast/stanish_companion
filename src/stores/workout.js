@@ -9,7 +9,7 @@ export const useWorkoutStore = defineStore('workout', {
     showPastWeeks: useLocalStorage('showPastWeeks', true),
     settings: useLocalStorage('settings', {
       restTime: 10,
-      repDuration: 3
+      repDuration: 6
     }),
     workoutSession: {
       step: 'warmup',
@@ -44,6 +44,21 @@ export const useWorkoutStore = defineStore('workout', {
       if (state.currentDay <= 2) return 'slow'
       if (state.currentDay <= 5) return 'medium'
       return 'fast'
+    },
+    getCurrentRepDuration: (state) => {
+      const speed = state.currentDay <= 2 ? 'slow' : state.currentDay <= 5 ? 'medium' : 'fast'
+      const baseDuration = state.settings.repDuration
+      
+      switch (speed) {
+        case 'slow':
+          return baseDuration
+        case 'medium':
+          return Math.round(baseDuration / 2)
+        case 'fast':
+          return Math.round(baseDuration / 3)
+        default:
+          return baseDuration
+      }
     }
   },
 
